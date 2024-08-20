@@ -1,0 +1,247 @@
+Element.Name2,Element.Name
+skl_Reading Com_g Comprehension,skl_Reading Comprehension
+skl_Active List_ctive Listening,skl_Active Listening
+skl_Writing_skl_Writing,skl_Writing
+skl_Speaking_skl_Speaking,skl_Speaking
+skl_Mathematics_skl_Mathematics,skl_Mathematics
+skl_Science_skl_Science,skl_Science
+skl_Critical Th_itical Thinking,skl_Critical Thinking
+skl_Active Lear_Active Learning,skl_Active Learning
+skl_Learning St_ning Strategies,skl_Learning Strategies
+skl_Monitoring_skl_Monitoring,skl_Monitoring
+skl_Social Perc_ Perceptiveness,skl_Social Perceptiveness
+skl_Coordinatio_kl_Coordination,skl_Coordination
+skl_Persuasion_skl_Persuasion,skl_Persuasion
+skl_Negotiation_skl_Negotiation,skl_Negotiation
+skl_Instructing_skl_Instructing,skl_Instructing
+skl_Service Ori_ice Orientation,skl_Service Orientation
+skl_Complex Pro_Problem Solving,skl_Complex Problem Solving
+skl_Operations _ations Analysis,skl_Operations Analysis
+skl_Technology _chnology Design,skl_Technology Design
+skl_Equipment S_pment Selection,skl_Equipment Selection
+skl_Installatio_kl_Installation,skl_Installation
+skl_Programming_skl_Programming,skl_Programming
+skl_Operation M_tion Monitoring,skl_Operation Monitoring
+skl_Operation a_ion and Control,skl_Operation and Control
+skl_Equipment M_ent Maintenance,skl_Equipment Maintenance
+skl_Troubleshoo_Troubleshooting,skl_Troubleshooting
+skl_Repairing_skl_Repairing,skl_Repairing
+skl_Quality Con_ontrol Analysis,skl_Quality Control Analysis
+skl_Judgment an_Decision Making,skl_Judgment and Decision Making
+skl_Systems Ana_ystems Analysis,skl_Systems Analysis
+skl_Systems Eva_tems Evaluation,skl_Systems Evaluation
+skl_Time Manage_Time Management,skl_Time Management
+skl_Management _ncial Resources,skl_Management of Financial Resources
+skl_Management _erial Resources,skl_Management of Material Resources
+skl_Management _onnel Resources,skl_Management of Personnel Resources
+knl_Administrat_ and Management,knl_Administration and Management
+knl_Clerical_knl_Clerical,knl_Clerical
+knl_Economics a_ and Accounting,knl_Economics and Accounting
+knl_Sales and M_s and Marketing,knl_Sales and Marketing
+knl_Customer an_ersonal Service,knl_Customer and Personal Service
+knl_Personnel a_Human Resources,knl_Personnel and Human Resources
+knl_Production _ and Processing,knl_Production and Processing
+knl_Food Produc_Food Production,knl_Food Production
+knl_Computers a_and Electronics,knl_Computers and Electronics
+knl_Engineering_ and Technology,knl_Engineering and Technology
+knl_Design_knl_Design,knl_Design
+knl_Building an_nd Construction,knl_Building and Construction
+knl_Mechanical_knl_Mechanical,knl_Mechanical
+knl_Mathematics_knl_Mathematics,knl_Mathematics
+knl_Physics_knl_Physics,knl_Physics
+knl_Chemistry_knl_Chemistry,knl_Chemistry
+knl_Biology_knl_Biology,knl_Biology
+knl_Psychology_knl_Psychology,knl_Psychology
+knl_Sociology a_nd Anthropology,knl_Sociology and Anthropology
+knl_Geography_knl_Geography,knl_Geography
+knl_Medicine an_e and Dentistry,knl_Medicine and Dentistry
+knl_Therapy and_ and Counseling,knl_Therapy and Counseling
+knl_Education a_on and Training,knl_Education and Training
+knl_English Lan_nglish Language,knl_English Language
+knl_Foreign Lan_oreign Language,knl_Foreign Language
+knl_Fine Arts_knl_Fine Arts,knl_Fine Arts
+knl_History and_ and Archeology,knl_History and Archeology
+knl_Philosophy _hy and Theology,knl_Philosophy and Theology
+knl_Public Safe_ty and Security,knl_Public Safety and Security
+knl_Law and Gov_ and Government,knl_Law and Government
+knl_Telecommuni_ecommunications,knl_Telecommunications
+knl_Communicati_tions and Media,knl_Communications and Media
+knl_Transportat__Transportation,knl_Transportation
+abl_Oral Compre_l Comprehension,abl_Oral Comprehension
+abl_Written Com_n Comprehension,abl_Written Comprehension
+abl_Oral Expres_Oral Expression,abl_Oral Expression
+abl_Written Exp_tten Expression,abl_Written Expression
+abl_Fluency of _luency of Ideas,abl_Fluency of Ideas
+abl_Originality_abl_Originality,abl_Originality
+abl_Problem Sen_lem Sensitivity,abl_Problem Sensitivity
+abl_Deductive R_ctive Reasoning,abl_Deductive Reasoning
+abl_Inductive R_ctive Reasoning,abl_Inductive Reasoning
+abl_Information_mation Ordering,abl_Information Ordering
+abl_Category Fl_ory Flexibility,abl_Category Flexibility
+abl_Mathematica_tical Reasoning,abl_Mathematical Reasoning
+abl_Number Faci_Number Facility,abl_Number Facility
+abl_Memorizatio_bl_Memorization,abl_Memorization
+abl_Speed of Cl_peed of Closure,abl_Speed of Closure
+abl_Flexibility_lity of Closure,abl_Flexibility of Closure
+abl_Perceptual _erceptual Speed,abl_Perceptual Speed
+abl_Spatial Ori_ial Orientation,abl_Spatial Orientation
+abl_Visualizati_l_Visualization,abl_Visualization
+abl_Selective A_ctive Attention,abl_Selective Attention
+abl_Time Sharin_bl_Time Sharing,abl_Time Sharing
+abl_Arm-Hand St_Hand Steadiness,abl_Arm-Hand Steadiness
+abl_Manual Dext_anual Dexterity,abl_Manual Dexterity
+abl_Finger Dext_inger Dexterity,abl_Finger Dexterity
+abl_Control Pre_ntrol Precision,abl_Control Precision
+abl_Multilimb C_mb Coordination,abl_Multilimb Coordination
+abl_Response Or_nse Orientation,abl_Response Orientation
+abl_Rate Contro_bl_Rate Control,abl_Rate Control
+abl_Reaction Ti_l_Reaction Time,abl_Reaction Time
+abl_Wrist-Finge_st-Finger Speed,abl_Wrist-Finger Speed
+abl_Speed of Li_f Limb Movement,abl_Speed of Limb Movement
+abl_Static Stre_Static Strength,abl_Static Strength
+abl_Explosive S_losive Strength,abl_Explosive Strength
+abl_Dynamic Str_ynamic Strength,abl_Dynamic Strength
+abl_Trunk Stren__Trunk Strength,abl_Trunk Strength
+abl_Stamina_abl_Stamina,abl_Stamina
+abl_Extent Flex_ent Flexibility,abl_Extent Flexibility
+abl_Dynamic Fle_mic Flexibility,abl_Dynamic Flexibility
+abl_Gross Body _dy Coordination,abl_Gross Body Coordination
+abl_Gross Body _ody Equilibrium,abl_Gross Body Equilibrium
+abl_Near Vision_abl_Near Vision,abl_Near Vision
+abl_Far Vision_abl_Far Vision,abl_Far Vision
+abl_Visual Colo_ Discrimination,abl_Visual Color Discrimination
+abl_Night Visio_bl_Night Vision,abl_Night Vision
+abl_Peripheral _ripheral Vision,abl_Peripheral Vision
+abl_Depth Perce_epth Perception,abl_Depth Perception
+abl_Glare Sensi_are Sensitivity,abl_Glare Sensitivity
+abl_Hearing Sen_ing Sensitivity,abl_Hearing Sensitivity
+abl_Auditory At_itory Attention,abl_Auditory Attention
+abl_Sound Local_nd Localization,abl_Sound Localization
+abl_Speech Reco_ech Recognition,abl_Speech Recognition
+abl_Speech Clar__Speech Clarity,abl_Speech Clarity
+sty_Achievement_ievement/Effort,sty_Achievement/Effort
+sty_Persistence_sty_Persistence,sty_Persistence
+sty_Initiative_sty_Initiative,sty_Initiative
+sty_Leadership_sty_Leadership,sty_Leadership
+sty_Cooperation_sty_Cooperation,sty_Cooperation
+sty_Concern for_cern for Others,sty_Concern for Others
+sty_Social Orie_ial Orientation,sty_Social Orientation
+sty_Self Contro_ty_Self Control,sty_Self Control
+sty_Stress Tole_tress Tolerance,sty_Stress Tolerance
+sty_Adaptabilit_ity/Flexibility,sty_Adaptability/Flexibility
+sty_Dependabili_y_Dependability,sty_Dependability
+sty_Attention t_ntion to Detail,sty_Attention to Detail
+sty_Integrity_sty_Integrity,sty_Integrity
+sty_Independenc_ty_Independence,sty_Independence
+sty_Innovation_sty_Innovation,sty_Innovation
+sty_Analytical _ytical Thinking,sty_Analytical Thinking
+act_Getting Inf_ing Information,act_Getting Information
+act_Monitor Pro_or Surroundings,"act_Monitor Processes, Materials, or Surroundings"
+"act_Identifying_ons, and Events","act_Identifying Objects, Actions, and Events"
+"act_Inspecting _es, or Material","act_Inspecting Equipment, Structures, or Material"
+act_Estimating _ or Information,"act_Estimating the Quantifiable Characteristics of Products, Events, or Information"
+"act_Judging the_ices, or People","act_Judging the Qualities of Things, Services, or People"
+act_Processing _ing Information,act_Processing Information
+act_Evaluating _ with Standards,act_Evaluating Information to Determine Compliance with Standards
+act_Analyzing D_ or Information,act_Analyzing Data or Information
+act_Making Deci_olving Problems,act_Making Decisions and Solving Problems
+act_Thinking Cr_king Creatively,act_Thinking Creatively
+act_Updating an_evant Knowledge,act_Updating and Using Relevant Knowledge
+act_Developing _ and Strategies,act_Developing Objectives and Strategies
+act_Scheduling _ and Activities,act_Scheduling Work and Activities
+"act_Organizing,_ioritizing Work","act_Organizing, Planning, and Prioritizing Work"
+act_Performing _ical Activities,act_Performing General Physical Activities
+act_Handling an_ Moving Objects,act_Handling and Moving Objects
+act_Controlling_s and Processes,act_Controlling Machines and Processes
+"act_Operating V_s, or Equipment","act_Operating Vehicles, Mechanized Devices, or Equipment"
+act_Interacting_ With Computers,act_Interacting With Computers
+"act_Drafting, L_, and Equipment","act_Drafting, Laying Out, and Specifying Technical Devices, Parts, and Equipment"
+act_Repairing a_nical Equipment,act_Repairing and Maintaining Mechanical Equipment
+act_Repairing a_ronic Equipment,act_Repairing and Maintaining Electronic Equipment
+act_Documenting_ing Information,act_Documenting/Recording Information
+act_Interpretin_tion for Others,act_Interpreting the Meaning of Information for Others
+act_Communicati_or Subordinates,"act_Communicating with Supervisors, Peers, or Subordinates"
+act_Communicati_de Organization,act_Communicating with Persons Outside Organization
+act_Establishin_l Relationships,act_Establishing and Maintaining Interpersonal Relationships
+act_Assisting a_ring for Others,act_Assisting and Caring for Others
+act_Selling or _luencing Others,act_Selling or Influencing Others
+act_Resolving C_ing with Others,act_Resolving Conflicts and Negotiating with Others
+act_Performing _with the Public,act_Performing for or Working Directly with the Public
+act_Coordinatin_ities of Others,act_Coordinating the Work and Activities of Others
+act_Developing _ Building Teams,act_Developing and Building Teams
+act_Training an_Teaching Others,act_Training and Teaching Others
+"act_Guiding, Di_ng Subordinates","act_Guiding, Directing, and Motivating Subordinates"
+act_Coaching an_veloping Others,act_Coaching and Developing Others
+act_Provide Con_dvice to Others,act_Provide Consultation and Advice to Others
+act_Performing _tive Activities,act_Performing Administrative Activities
+act_Staffing Or_izational Units,act_Staffing Organizational Units
+act_Monitoring _lling Resources,act_Monitoring and Controlling Resources
+ctx_Public Spea_Public Speaking,ctx_Public Speaking
+ctx_Telephone_ctx_Telephone,ctx_Telephone
+ctx_Electronic _Electronic Mail,ctx_Electronic Mail
+ctx_Letters and_tters and Memos,ctx_Letters and Memos
+ctx_Face-to-Fac_ace Discussions,ctx_Face-to-Face Discussions
+ctx_Contact Wit_act With Others,ctx_Contact With Others
+ctx_Work With W_k Group or Team,ctx_Work With Work Group or Team
+ctx_Deal With E_ernal Customers,ctx_Deal With External Customers
+ctx_Coordinate _ or Lead Others,ctx_Coordinate or Lead Others
+ctx_Responsible_alth and Safety,ctx_Responsible for Others' Health and Safety
+ctx_Responsibil_mes and Results,ctx_Responsibility for Outcomes and Results
+ctx_Frequency o_lict Situations,ctx_Frequency of Conflict Situations
+ctx_Deal With U_or Angry People,ctx_Deal With Unpleasant or Angry People
+ctx_Deal With P_gressive People,ctx_Deal With Physically Aggressive People
+"ctx_Indoors, En_ally Controlled","ctx_Indoors, Environmentally Controlled"
+"ctx_Indoors, No_ally Controlled","ctx_Indoors, Not Environmentally Controlled"
+"ctx_Outdoors, E_osed to Weather","ctx_Outdoors, Exposed to Weather"
+"ctx_Outdoors, U_rs, Under Cover","ctx_Outdoors, Under Cover"
+ctx_In an Open _le or Equipment,ctx_In an Open Vehicle or Equipment
+ctx_In an Enclo_le or Equipment,ctx_In an Enclosed Vehicle or Equipment
+ctx_Physical Pr_sical Proximity,ctx_Physical Proximity
+"ctx_Sounds, Noi_r Uncomfortable","ctx_Sounds, Noise Levels Are Distracting or Uncomfortable"
+ctx_Very Hot or_ld Temperatures,ctx_Very Hot or Cold Temperatures
+ctx_Extremely B_equate Lighting,ctx_Extremely Bright or Inadequate Lighting
+ctx_Exposed to _to Contaminants,ctx_Exposed to Contaminants
+ctx_Cramped Wor_kward Positions,"ctx_Cramped Work Space, Awkward Positions"
+ctx_Exposed to _ Body Vibration,ctx_Exposed to Whole Body Vibration
+ctx_Exposed to _ed to Radiation,ctx_Exposed to Radiation
+ctx_Exposed to _e or Infections,ctx_Exposed to Disease or Infections
+ctx_Exposed to _ to High Places,ctx_Exposed to High Places
+ctx_Exposed to _dous Conditions,ctx_Exposed to Hazardous Conditions
+ctx_Exposed to _rdous Equipment,ctx_Exposed to Hazardous Equipment
+"ctx_Exposed to _ites, or Stings","ctx_Exposed to Minor Burns, Cuts, Bites, or Stings"
+ctx_Spend Time _nd Time Sitting,ctx_Spend Time Sitting
+ctx_Spend Time _d Time Standing,ctx_Spend Time Standing
+"ctx_Spend Time _folds, or Poles","ctx_Spend Time Climbing Ladders, Scaffolds, or Poles"
+ctx_Spend Time _ing and Running,ctx_Spend Time Walking and Running
+"ctx_Spend Time _ng, or Crawling","ctx_Spend Time Kneeling, Crouching, Stooping, or Crawling"
+ctx_Spend Time _gaining Balance,ctx_Spend Time Keeping or Regaining Balance
+"ctx_Spend Time _ls, or Controls","ctx_Spend Time Using Your Hands to Handle, Control, or Feel Objects, Tools, or Controls"
+ctx_Spend Time _isting the Body,ctx_Spend Time Bending or Twisting the Body
+ctx_Spend Time _etitive Motions,ctx_Spend Time Making Repetitive Motions
+ctx_Wear Common_or Life Jackets,"ctx_Wear Common Protective or Safety Equipment such as Safety Shoes, Glasses, Gloves, Hearing Protection, Hard Hats, or Life Jackets"
+ctx_Wear Specia_tion Protection,"ctx_Wear Specialized Protective or Safety Equipment such as Breathing Apparatus, Safety Harness, Full Protection Suits, or Radiation Protection"
+ctx_Consequence_quence of Error,ctx_Consequence of Error
+ctx_Impact of D_Company Results,ctx_Impact of Decisions on Co-workers or Company Results
+ctx_Frequency o_Decision Making,ctx_Frequency of Decision Making
+ctx_Freedom to _ Make Decisions,ctx_Freedom to Make Decisions
+ctx_Degree of A_e of Automation,ctx_Degree of Automation
+ctx_Importance _act or Accurate,ctx_Importance of Being Exact or Accurate
+ctx_Importance _ting Same Tasks,ctx_Importance of Repeating Same Tasks
+ctx_Structured _structured Work,ctx_Structured versus Unstructured Work
+ctx_Level of Co_ of Competition,ctx_Level of Competition
+ctx_Time Pressu_x_Time Pressure,ctx_Time Pressure
+ctx_Pace Determ_ed of Equipment,ctx_Pace Determined by Speed of Equipment
+ctx_Work Schedu__Work Schedules,ctx_Work Schedules
+ctx_Duration of_pical Work Week,ctx_Duration of Typical Work Week
+vlu_Achievement_vlu_Achievement,vlu_Achievement
+vlu_Working Con_king Conditions,vlu_Working Conditions
+vlu_Recognition_vlu_Recognition,vlu_Recognition
+vlu_Relationshi_u_Relationships,vlu_Relationships
+vlu_Support_vlu_Support,vlu_Support
+vlu_Independenc_lu_Independence,vlu_Independence
+edu_Required Le_el of Education,edu_Required Level of Education
+edu_Related Wor_Work Experience,edu_Related Work Experience
+edu_On-Site or _-Plant Training,edu_On-Site or In-Plant Training
+edu_On-the-Job _he-Job Training,edu_On-the-Job Training
+edu_Job-Related_l Certification,edu_Job-Related Professional Certification
+edu_Apprentices__Apprenticeship,edu_Apprenticeship
