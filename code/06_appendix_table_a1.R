@@ -1,7 +1,7 @@
 library(data.table)
 library(kableExtra)
 
-table2 <- fread("../ref/table_2_asa.csv")
+table2 <- fread("../ref/appendix_table_a1.csv")
 table2[, Datasource :=  sub('^(\\w?)', '\\U\\1', Datasource, perl=T)]
 table2[,names(table2)[2:5] := lapply(.SD, formatC, digits = 0, big.mark = ","), .SDcols = names(table2)[2:5]]
 

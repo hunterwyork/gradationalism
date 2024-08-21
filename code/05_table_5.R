@@ -2,11 +2,12 @@ library(ggplot2)
 library(data.table)
 library(dplyr)
 
-model_version <- "20240123_first_Resub_trial"
+model_version <- "20240820_submission_final"
 
 counts <- readRDS(  paste0("../ref/counts", model_version, ".Data"))
 skills <- readRDS("../ref/skills_occ1950_new.rds")
 vars <- names(skills)[(!names(skills) %like% "OCC|occ")]
+skills[, OCC1950 := as.numeric(OCC1950)]
 
 
 pop_weights <- counts[,.(pop_weight = sum(N)), by = .(occ1950, parent_sex, sex)]

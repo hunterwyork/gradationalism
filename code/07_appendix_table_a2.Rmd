@@ -31,11 +31,12 @@ table1[, OCCSOC := paste0(substr(OCCSOC,1,2), "", substr(OCCSOC, 3, 7), "")]
 table1[, OCC1950 := as.numeric(OCC1950)]
 table1 <- table1[order(OCC1950)]
 
-education_2018 <- read_excel("../ref/db_22_2_excel 2018.2/Education, Training, and Experience.xlsx") %>% data.table()
+education_2018 <- read_excel("../ref/db_27_0_excel/Education, Training, and Experience.xlsx") %>% data.table()
 temp <- education_2018[,.(`O*NET-SOC Code`, Title)] %>% unique()
 temp[, OCCSOC := substr(`O*NET-SOC Code`,1,7)]
 temp <- temp[, Title := Title[1], by = OCCSOC]
 temp <- temp[,.(OCCSOC, Title)] %>% unique()
+temp[, OCCSOC := gsub("-", "", OCCSOC)]
 
 table1 <- merge(table1, temp[,.(OCCSOC, Title)])
 table1 <- table1[order(OCC1950)]

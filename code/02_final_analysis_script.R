@@ -1,4 +1,3 @@
-library(Rfast)
 library(ggplot2)
 library(dplyr)
 library(magrittr)
@@ -7,7 +6,10 @@ library(readxl)
 library(haven)
 library(data.table)
 library(gnm)
-
+library(ggthemes)
+library(kableExtra)
+library(ggh4x)
+library(lmtest)
 
 # ggplot settings
 theme_set(theme_bw(base_size = 8, base_family = "serif")) 
@@ -196,8 +198,6 @@ all_out[, final := paste0(estim, "\\newline", con_ing)]
 all_out <- all_out[order(Variable)]
 all_out_wide <- dcast(all_out, Variable ~ `Parent/Child`, value.var = "final")
 
-library(kableExtra)
-
 dir.create(paste0("../outputs/", model_version))
 
 knitr::kable(all_out_wide,"latex",
@@ -208,6 +208,10 @@ knitr::kable(all_out_wide,"latex",
              linesep = "") %>%
   add_header_above(c(" " =1, "Intergenerational Elasticity Among" = 4)) %>% 
   save_kable(file =  paste0("../outputs/",model_version, "/table_4.tex"))
+
+
+# save counts as intermediate file for table 5 later
+saveRDS(counts,   paste0("../ref/counts", model_version, ".Data"))
 
 
 
@@ -574,7 +578,6 @@ dt[, `Both Insignificant` := ifelse(all(upper > 7 & lower < -7), "Not Significan
                                     "Significant"), 
    by = .(sex, parent_sex, name)]
 
-library(ggh4x)
 
 # rename facet labels
 dt[parent_sex == 2, parent_sex_clean := "Mothers"]
@@ -712,7 +715,6 @@ dt[, `Both Insignificant` := ifelse(all(upper > 7 & lower < -7), "Not Significan
                                     "Significant"), 
    by = .(sex, parent_sex, name)]
 
-library(ggh4x)
 
 dt[parent_sex == 2, parent_sex_clean := "Mothers"]
 dt[parent_sex == 1, parent_sex_clean := "Fathers"]
@@ -1017,52 +1019,51 @@ for(c.sex in 1:2){
     rm(list = ls()[ls() %like% "base_model"])
     load(paste0("../ref/workspace", c.sex, "_", c.parent_sex,"_" ,model_version, ".Data"))
     
-    
-    ### base model characteristics
     lapply(list(base_model, 
+                base_model_mic_mac_mes, 
+                base_model_compare_2,
                 base_model_status,
                 base_model_mic_mac_mes_status,
                 base_model_mic_mac_mes_vars_10,
+                #  base_model_mic_mac_mes_vars_RC_10,
                 base_model_vars_10_no_status,
-                base_model_vars_10, 
-                base_model_mic_mac_mes), model_descr ) %>% rbindlist -> out1
-    lapply(list(                  base_model_status,
-                                  base_model_mic_mac_mes_status,
-                                  base_model_mic_mac_mes_vars_10,
-                                  base_model_vars_10_no_status,
-                                  base_model_vars_10,
-                                  base_model_mic_mac_mes),lmr,  c.mod_comp = "base_model", inc_dem = F) %>%
+                base_model_vars_10), model_descr ) %>% rbindlist -> out1
+    lapply(list(                                                    base_model_mic_mac_mes,
+                                                                    base_model_compare_2,
+                                                                    base_model_status,
+                                                                    base_model_mic_mac_mes_status,
+                                                                    base_model_mic_mac_mes_vars_10,
+                                                                    #                base_model_mic_mac_mes_vars_RC_10,
+                                                                    base_model_vars_10_no_status,
+                                                                    base_model_vars_10),lmr,  c.mod_comp = "base_model", inc_dem = F) %>%
       rbindlist()-> out2
     out2 <- rbind(data.table(matrix(c(NA, NA, NA, NA), nrow = 1)), out2 , use.names = F)
-    
-    # compare nested models to model with just sei
     lapply(list(base_model_mic_mac_mes_status, 
-                base_model_mic_mac_mes_vars_10, 
+                base_model_mic_mac_mes_vars_10,
+                #base_model_mic_mac_mes_vars_RC_10,
                 base_model_vars_10),lmr,
            c.mod_comp = "base_model_status", inc_dem = F) %>%
       rbindlist()-> out3
-    # append to table
-    out3 <- rbind(data.table(matrix(c(NA), nrow =2, ncol = 4)),
+    out3 <- rbind(data.table(matrix(c(NA), nrow =4, ncol = 4)),
                   out3[1:2,] ,
                   data.table(matrix(c(NA), nrow = 1, ncol = 4)), 
-                  out3[3,], 
-                  data.table(matrix(c(NA), nrow = 1, ncol = 4)),
+                  out3[4,], 
+                  data.table(matrix(c(NA), nrow = 0, ncol = 4)),
                   use.names = F)
-    # compare nested model to mes/mic/mac immobility model
-    lapply(list(base_model_mic_mac_mes_vars_10),lmr,
-           c.mod_comp = "base_model_mic_mac_mes_status", inc_dem = F) %>%
+    lapply(list(base_model_mic_mac_mes_vars_10#,
+                #base_model_mic_mac_mes_vars_RC_10
+    ),lmr,
+    c.mod_comp = "base_model_mic_mac_mes_status", inc_dem = F) %>%
       rbindlist()-> out4
-    # append to table
-    out4 <- rbind(data.table(matrix(c(NA), nrow = 3, ncol = 4)),
+    out4 <- rbind(data.table(matrix(c(NA), nrow = 5, ncol = 4)),
                   out4 ,
-                  data.table(matrix(c(NA), nrow = 3, ncol = 4)),use.names = F)
-    # compare nested model to pure gradational model
+                  data.table(matrix(c(NA), nrow = 2, ncol = 4)),use.names = F)
     lapply(list(base_model_vars_10),lmr,
            c.mod_comp = "base_model_vars_10_no_status", inc_dem = F) %>%
       rbindlist()-> out5
-    out5 <- rbind(data.table(matrix(c(NA), nrow = 5, ncol = 4)),
+    out5 <- rbind(data.table(matrix(c(NA), nrow = 7, ncol = 4)),
                   out5,
-                  data.table(matrix(c(NA), nrow = 1, ncol = 4)),
+                  data.table(matrix(c(NA), nrow = 0, ncol = 4)),
                   use.names = F)
     out_all <- cbind(out1, out2, out3, out4, out5)
     out_all[, sex := c.sex]
@@ -1073,9 +1074,10 @@ for(c.sex in 1:2){
   }
 }
 
-table2 <- copy(out_all_all)
+table3 <- copy(out_all_all)
 
-saveRDS(table2, paste0("../outputs/", model_version, "/table3.rds"))
+saveRDS(table3, paste0("../outputs/", model_version, "/table3.rds"))
+
 
 
 ####################
@@ -1134,13 +1136,8 @@ for(c.sex in 1){
       counts <- merge(counts, father_skills[,.SD, .SDcols = c("OCC1950_f", paste0(vars, "_f"), 
                                                               "microocc_f", "mesoocc_f", "macroocc_f")], by.x = "focc1950", by.y = "OCC1950_f")
       
-      counts[, PC_control := sample(PC1, nrow(counts))]
-      counts[, PC_control_f := sample(PC1, nrow(counts))]
-      
-      # Create difference variables between children and parents
       
       vars_to_loop <- vars
-      vars_to_loop <- c(vars_to_loop, "PC_control")
       for(c_var in vars_to_loop){
         counts[, paste0(c_var, "_diff") := (get(c_var) - get(paste0(c_var, "_f")))]
       }

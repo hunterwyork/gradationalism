@@ -1,4 +1,3 @@
-library(Rfast)
 library(ggplot2)
 library(dplyr)
 library(magrittr)
@@ -6,8 +5,11 @@ library(stringr)
 library(readxl)
 library(haven)
 library(data.table)
-library(umap)
 library(ggpubr)
+library(readr)
+library(psych)
+library(readstata13)
+
 theme_set(theme_bw(base_size = 8, base_family = "serif")) 
 
 
@@ -159,6 +161,8 @@ skills[, OCCSOC := gsub("-", "", substr(O.NET.SOC.Code,1,7))]
 skills[, Standard.Error := as.numeric(Standard.Error)]
 skills[, Element.Name := paste0(Element.Name, ".", Scale.ID)]
 
+saveRDS(skills, "../ref/skills_unedited.rds")
+
 
 # collapse to a smaller dataset
 skills <- skills[, .(Data.Value  = mean(Data.Value, na.rm = T), 
@@ -228,7 +232,7 @@ skills_arch <- copy(skills)
 # run parallel analysis to choose number of factors
 
 out <- psych::fa.parallel(x= cor(skills[,.SD, .SDcols = names(skills)[names(skills) %like% ".LV"]]), fm="minres", fa="fa",
-                          n.obs = nrow(skills))
+                          n.obs = nrow(skills),sim = F, n.iter = 1 )
 
 # extract values for parallel analysis
 
@@ -261,9 +265,12 @@ dev.off()
 
 ###
 # # Rerun FA using N factors (N = 10)
-fact_anal_orig <- psych::fa(skills[,.SD, .SDcols = names(skills)[names(skills) %like% ".LV"]], nfactors = 10, max.iter = 100000, scores = "regression", rotate = "varimax")
+fact_anal_orig <- psych::fa(skills[,.SD, .SDcols = names(skills)[names(skills) %like% ".LV"]], nfactors = 10, max.iter = 100000,
+                            scores = "regression", rotate = "varimax")
 
 # append scores to data
+
+# on some machines this leads to different outcomes. I haven't figured out why, but it is reproducible on my machine.
 fact_scores <- fact_anal_orig$scores %>% data.table()
 setnames(fact_scores, names(fact_scores), gsub("MR", "fact_", names(fact_scores)))
 

@@ -19,73 +19,73 @@ library(data.table)
 library(dplyr)
 
 
-model_version <- "20240123_first_Resub_trial"
+model_version <- "20240820_submission_final"
 
 ```
 ```{r, results = 'asis'}
-table2 <- readRDS( paste0("../outputs/", model_version, "/table2.rds"))
+table3 <- readRDS( paste0("../outputs/", model_version, "/table3.rds"))
 
-setnames(table2, c("ll", "aic", "bic", "delta", "df", "q","df.x", "Chisq.x", 
+setnames(table3, c("ll", "aic", "bic", "delta", "df", "q","df.x", "Chisq.x", 
                    "Pr(>Chisq).x", "hm.x", "df.y", "Chisq.y", 
                    "Pr(>Chisq).y","hm.y", "df.z", "Chisq.z", 
                    "Pr(>Chisq).z","hm.z", 
                    "df.a", "Chisq.a", 
                    "Pr(>Chisq).a","hm.a", "sex", "parent_sex" ))
-table2[, Chisq.x  := round(Chisq.x)]
-table2[, Chisq.y  := round(Chisq.y)]
-table2[, Chisq.z  := round(Chisq.z)]
-table2[, Chisq.a  := round(Chisq.a)]
-table2[, ll  := round(ll)]
+table3[, Chisq.x  := round(Chisq.x)]
+table3[, Chisq.y  := round(Chisq.y)]
+table3[, Chisq.z  := round(Chisq.z)]
+table3[, Chisq.a  := round(Chisq.a)]
+table3[, ll  := round(ll)]
 
-table2[ ,`Pr(>Chisq).x` := ifelse(`Pr(>Chisq).x` < .001,"***", 
+table3[ ,`Pr(>Chisq).x` := ifelse(`Pr(>Chisq).x` < .001,"***", 
                                   ifelse(`Pr(>Chisq).x` < .01, "**", 
                                          ifelse(`Pr(>Chisq).x` < .05, "*", 
                                                 ifelse(`Pr(>Chisq).x` >=.05, "NS", NA))))]
-table2[ ,`Pr(>Chisq).y` := ifelse(`Pr(>Chisq).y` < .001,"***", 
+table3[ ,`Pr(>Chisq).y` := ifelse(`Pr(>Chisq).y` < .001,"***", 
                                   ifelse(`Pr(>Chisq).y` < .01, "**", 
                                          ifelse(`Pr(>Chisq).y` < .05, "*", 
                                                 ifelse(`Pr(>Chisq).y` >=.05, "NS", NA))))]
-table2[ ,`Pr(>Chisq).z` := ifelse(`Pr(>Chisq).z` < .001,"***", 
+table3[ ,`Pr(>Chisq).z` := ifelse(`Pr(>Chisq).z` < .001,"***", 
                                   ifelse(`Pr(>Chisq).z` < .01, "**", 
                                          ifelse(`Pr(>Chisq).z` < .05, "*", 
                                                 ifelse(`Pr(>Chisq).z` >=.05, "NS", NA))))]
-table2[ ,`Pr(>Chisq).a` := ifelse(`Pr(>Chisq).a` < .001,"***", 
+table3[ ,`Pr(>Chisq).a` := ifelse(`Pr(>Chisq).a` < .001,"***", 
                                   ifelse(`Pr(>Chisq).a` < .01, "**", 
                                          ifelse(`Pr(>Chisq).a` < .05, "*", 
                                                 ifelse(`Pr(>Chisq).a` >=.05, "NS", NA))))]
-table2[is.na(table2)] <- ""
+table3[is.na(table3)] <- ""
 
 library(kableExtra)
-table2 <- table2[,.( ll, bic, df, df.x, Chisq.x,
+table3 <- table3[,.( ll, bic, df, df.x, Chisq.x,
                      `Pr(>Chisq).x`, df.y, Chisq.y,
                      `Pr(>Chisq).y`,  df.z, Chisq.z,
                      `Pr(>Chisq).z`,  df.a, Chisq.a, `Pr(>Chisq).a`)]
 
 
 
-table2[c(1,9,17,25), model :=     "$\\;$Model 1. $\\:$Base Model"]
-table2[c(1,9,17,25) + 1, model := "$\\;$Model 2. $\\:\\quad$Model 1 + Macro-/Meso-/Micro- Class Immobility"]
-table2[c(1,9,17,25) + 2, model := "$\\;$Model 3. $\\:\\quad\\quad$Model 2 + Meso-Class Mobility"]
-table2[c(1,9,17,25) + 3, model := "$\\;$Model 4. $\\:\\quad$Model 1 + SEI"]
-table2[c(1,9,17,25) + 4, model := "$\\;$Model 5. $\\:\\quad\\quad$Model 4 + Macro-/Meso-/Micro- Class Immobility"]
-table2[c(1,9,17,25) + 5, model := "$\\;$Model 6. $\\:\\quad\\quad\\quad$Model 5 + 10 Gradational Effects"]
-#table2[c(1,9,17,25) + 4, model := "$\\;$Model 5. $\\:\\quad\\quad\\quad$Model 3 + 4 Gradational RC Effects"]
-table2[c(1,9,17,25) + 6, model := "$\\;$Model 7. $\\:\\quad$Model 1 + 10 Gradational Effects"]
-table2[c(1,9,17,25) + 7, model := "$\\;$Model 8. $\\:\\quad\\quad$Model 7 + SEI"]
+table3[c(1,9,17,25), model :=     "$\\;$Model 1. $\\:$Base Model"]
+table3[c(1,9,17,25) + 1, model := "$\\;$Model 2. $\\:\\quad$Model 1 + Macro-/Meso-/Micro- Class Immobility"]
+table3[c(1,9,17,25) + 2, model := "$\\;$Model 3. $\\:\\quad\\quad$Model 2 + Meso-Class Mobility"]
+table3[c(1,9,17,25) + 3, model := "$\\;$Model 4. $\\:\\quad$Model 1 + SEI"]
+table3[c(1,9,17,25) + 4, model := "$\\;$Model 5. $\\:\\quad\\quad$Model 4 + Macro-/Meso-/Micro- Class Immobility"]
+table3[c(1,9,17,25) + 5, model := "$\\;$Model 6. $\\:\\quad\\quad\\quad$Model 5 + 10 Gradational Effects"]
+#table3[c(1,9,17,25) + 4, model := "$\\;$Model 5. $\\:\\quad\\quad\\quad$Model 3 + 4 Gradational RC Effects"]
+table3[c(1,9,17,25) + 6, model := "$\\;$Model 7. $\\:\\quad$Model 1 + 10 Gradational Effects"]
+table3[c(1,9,17,25) + 7, model := "$\\;$Model 8. $\\:\\quad\\quad$Model 7 + SEI"]
 
 
 
 
-table2 <- table2[,.(model, ll, bic, df, df.x, Chisq.x, `Pr(>Chisq).x`, df.y, Chisq.y, `Pr(>Chisq).y`,  df.z, Chisq.z, `Pr(>Chisq).z`,  df.a, Chisq.a, `Pr(>Chisq).a`)]
+table3 <- table3[,.(model, ll, bic, df, df.x, Chisq.x, `Pr(>Chisq).x`, df.y, Chisq.y, `Pr(>Chisq).y`,  df.z, Chisq.z, `Pr(>Chisq).z`,  df.a, Chisq.a, `Pr(>Chisq).a`)]
 
-nums <- names(table2)[names(table2) %like% "aic|bic|df|^Chisq|ll"]
-table2[,(nums) := lapply(.SD, as.numeric), .SDcols = nums]
+nums <- names(table3)[names(table3) %like% "aic|bic|df|^Chisq|ll"]
+table3[,(nums) := lapply(.SD, as.numeric), .SDcols = nums]
 
-table2[,(nums) := lapply(.SD, formatC,  big.mark = ",", format = "d"), .SDcols = nums]
-table2[is.na(table2)] <- ""
-table2[table2 == "NA"] <- ""
+table3[,(nums) := lapply(.SD, formatC,  big.mark = ",", format = "d"), .SDcols = nums]
+table3[is.na(table3)] <- ""
+table3[table3 == "NA"] <- ""
 
-knitr::kable(table2,"latex", row.names = F,longtable = T, escape = F,align = c("l", rep("r", 5),
+knitr::kable(table3,"latex", row.names = F,longtable = T, escape = F,align = c("l", rep("r", 5),
                                                                  "c", rep("r", 2), "c", rep("r", 2), "c",  rep("r", 2), "c"),
              col.names = c( "Model", "$LL$","$BIC$", "$df$","$\\Delta df$", "Chi Sq.", "P-Value", "$\\Delta df$", "Chi Sq.", "P-Value","$\\Delta df$", "Chi Sq.", "P-Value", "$\\Delta df$", "Chi Sq.", "P-Value"), 
              booktabs = TRUE,
@@ -126,5 +126,5 @@ knitr::kable(table2,"latex", row.names = F,longtable = T, escape = F,align = c("
     column_spec(c(2:4, 6:7, 9:10, 12:13, 15:16), width = "10mm") %>% 
     column_spec(c(5, 8, 11, 14), width = "6mm") %>% 
 
-  save_kable(file = paste0("../outputs/", model_version, "/table_appendix_4.tex"))
+  save_kable(file = paste0("../outputs/", model_version, "/table_appendix_5.tex"))
 ```

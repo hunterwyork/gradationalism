@@ -19,42 +19,42 @@ library(data.table)
 library(dplyr)
 
 
-model_version <- "20230708_fixed_xwalk_v2"
+model_version <- "20240820_submission_final"
 
 ```
 ```{r, results = 'asis'}
-table_3 <- readRDS("../occs_exemps.rds")
-table_3[, Factor := tstrsplit(Factor, "_", keep = 3)]
-table_3[, Factor := paste0(1:10, " - ", Factor)]
-setnames(table_3, "Top 5 Components", "Top 10 Components")
+table_2 <- readRDS("../occs_exemps.rds")
+table_2[, Factor := tstrsplit(Factor, "_", keep = 3)]
+table_2[, Factor := paste0(1:10, " - ", Factor)]
+setnames(table_2, "Top 5 Components", "Top 10 Components")
 
-#table_3[, `Top 10 Components` := gsub("---", "\\\\textcolor{red}{", `Top 10 Components`, perl = T)]
+#table_2[, `Top 10 Components` := gsub("---", "\\\\textcolor{red}{", `Top 10 Components`, perl = T)]
 
-table_3[, `Top 10 Components` := gsub("skl_", "\\\\emph{Skill}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("act_", "\\\\emph{Work Activity}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("abl_", "\\\\emph{Ability}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("knl_", "\\\\emph{Knowledge}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("vlu_", "\\\\emph{Value}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("ctx_", "\\\\emph{Work Context}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("edu_", "\\\\emph{Credential}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("sty_", "\\\\emph{Work Style}: ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("_", " ", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("---;", "*;", `Top 10 Components`, perl = T)]
-table_3[, `Top 10 Components` := gsub("---$", "*", `Top 10 Components`)]
-table_3[, `Top 10 Components` := gsub("---", "*", `Top 10 Components`, perl = T)]
+table_2[, `Top 10 Components` := gsub("skl_", "\\\\emph{Skill}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("act_", "\\\\emph{Work Activity}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("abl_", "\\\\emph{Ability}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("knl_", "\\\\emph{Knowledge}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("vlu_", "\\\\emph{Value}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("ctx_", "\\\\emph{Work Context}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("edu_", "\\\\emph{Credential}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("sty_", "\\\\emph{Work Style}: ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("_", " ", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("---;", "*;", `Top 10 Components`, perl = T)]
+table_2[, `Top 10 Components` := gsub("---$", "*", `Top 10 Components`)]
+table_2[, `Top 10 Components` := gsub("---", "*", `Top 10 Components`, perl = T)]
 
-table_3[, `Maximum/Minimum Extremes` := paste0(`Maximum Occupation`, " - ", `Minimum Occupation`)]
-table_3[, `Maximum Occupation`:= NULL]
-table_3[, `Minimum Occupation`:= NULL]
-table_3[, Factor := gsub("/", "; ", Factor)]
-#setnames(table_3, "Top 10 Components", "Top 3 Components")
-table_3[, `Minimum Scoring` := tstrsplit(`Maximum/Minimum Extremes`, " - ", keep = 2)]
-table_3[, `Maximum Scoring` := tstrsplit(`Maximum/Minimum Extremes`, " - ", keep = 1)]
-table_3[, `Maximum/Minimum Extremes` := NULL]
+table_2[, `Maximum/Minimum Extremes` := paste0(`Maximum Occupation`, " - ", `Minimum Occupation`)]
+table_2[, `Maximum Occupation`:= NULL]
+table_2[, `Minimum Occupation`:= NULL]
+table_2[, Factor := gsub("/", "; ", Factor)]
+#setnames(table_2, "Top 10 Components", "Top 3 Components")
+table_2[, `Minimum Scoring` := tstrsplit(`Maximum/Minimum Extremes`, " - ", keep = 2)]
+table_2[, `Maximum Scoring` := tstrsplit(`Maximum/Minimum Extremes`, " - ", keep = 1)]
+table_2[, `Maximum/Minimum Extremes` := NULL]
 
-setnames(table_3, "Top 10 Components", "Top 5 Components")
+setnames(table_2, "Top 10 Components", "Top 5 Components")
 
-knitr::kable(table_3[1:10], "latex", row.names = F, escape = F,#align = c("r", rep("r", 3)), #booktabs = T,
+knitr::kable(table_2[1:10], "latex", row.names = F, escape = F,#align = c("r", rep("r", 3)), #booktabs = T,
              #caption = "First 10 Latent Factors and Defining Characteristics",
              booktabs = TRUE, linesep = "") %>%
  # kableExtra::add_header_above(c( "First 11 Latent Factors, Their Top Loadings, and Exemplary Occupations" = 4)) %>%
