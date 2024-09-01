@@ -525,10 +525,6 @@ saveRDS(dt, "../ref/figure_1_data.rds")
 
 
 
-
-
-
-
 # Plot actual coefficients
 out3 <- list()
 i <- 0
@@ -546,7 +542,6 @@ for(c.sex in 1:2){
 dt <-rbindlist(out3)
 
 saveRDS(dt, "../ref/figure_2_data.RDS")
-
 
 
 
