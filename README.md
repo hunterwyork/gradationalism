@@ -3,10 +3,11 @@
 ## Manifest
 
 ### Code
-- **01-10.R or .Rmd**  
+- **01-16.R or .Rmd**  
   Code for execution of analysis and making figures and tables
+  NB: Any appendix tables not explicitly referenced by a filename are made in 01 or 02 files.
 - **99.R**  
-  Helper functions
+  Helper functions called by files 01, 02. 
 
 ### Inputs
 - **pooled_data(1).rds**  
@@ -28,10 +29,10 @@
   Micro/meso/macroclass crosswalk to census 1970 codes  
   _Song, Xi, Catherine G. Massey, Karen A. Rolf, Joseph P. Ferrie, Jonathan L. Rothbaum, and Yu Xie. 2020. “Long-Term Decline in Intergenerational Mobility in the United States since the 1850s.” Proceedings of the National Academy of Sciences 117(1): 251–58._
 - **Census_integrated_occ_crosswalks.xlsx**  
-  Crosswalks across all census years
+  Crosswalks across all census years, from IPUMS website, but unable to find source.
 
 ### Outputs
-[EMPTY]
+[EMPTY] - To be filled by code.
 
 
 ## Instructions
