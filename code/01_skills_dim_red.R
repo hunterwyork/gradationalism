@@ -260,6 +260,11 @@ pdf("../outputs/appendix_figure_a2.pdf", width = 4.3, height = 3.3)
 print(gg)
 dev.off()
 
+tiff("../outputs/appendix_figure_a2.tiff", width = 4.3, height = 3.3, res = 800, units = 'in')
+print(gg)
+dev.off()
+
+
 
 
 
@@ -462,6 +467,11 @@ pdf("../outputs/appendix_figure_a1.pdf", width = 4.3, height = 3.3)
 print(gg)
 dev.off()
 
+tiff("../outputs/appendix_figure_a1.tiff", width = 4.3, height = 3.3, res = 800, units = 'in')
+print(gg)
+dev.off()
+
+
 
 
 
@@ -509,6 +519,11 @@ gg <- skills_temp %>%
 pdf("../outputs/appendix_figure_a3.pdf", height= 6, width = 10)
 print(gg)
 dev.off()
+
+tiff("../outputs/appendix_figure_a3.tiff", width = 10, height = 6, res = 800, units = 'in')
+print(gg)
+dev.off()
+
 
 # save output
 saveRDS(skills, "../ref/skills_occ1950_new.rds")

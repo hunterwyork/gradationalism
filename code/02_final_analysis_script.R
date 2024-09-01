@@ -642,7 +642,9 @@ pdf(paste0("../outputs/", model_version, "/figure_1.pdf"), height = 6.95, width 
 print(gg)
 dev.off()
 
-
+tiff(paste0("../outputs/", model_version, "/figure_1.tiff"), height = 6.95, width = 7.3, res = 800, units = 'in')
+print(gg)
+dev.off()
 
 gg <- ggplot(dt[level %like% "Micro" &
                   model %like% "fact|PC|pca|base_model_mic_mac_mes|Eight|Six|All"]
@@ -671,7 +673,7 @@ gg <- ggplot(dt[level %like% "Micro" &
   theme(strip.background =element_rect(fill="white")) + 
   guides(linetype = FALSE, 
          alpha = F) + 
-  scale_color_manual(values = c("gray20", "gray70"))# + theme_bw()
+  scale_color_manual(values = c("black", "gray60"))# + theme_bw()
 
 print(gg)
 
@@ -679,6 +681,10 @@ print(gg)
 dir.create(paste0("../outputs/", model_version), recursive = T)
 
 pdf(paste0("../outputs/", model_version, "/figure_1_bw.pdf"), height = 6.95, width = 7.3)
+print(gg)
+dev.off()
+
+tiff(paste0("../outputs/", model_version, "/figure_1_bw.tiff"), height = 6.95, width = 7.3, res = 800, units = 'in')
 print(gg)
 dev.off()
 
@@ -865,6 +871,10 @@ pdf(paste0("../outputs/", model_version, "/figure_2.pdf"), height = 5, width = 7
 print(gg)
 dev.off()
 
+tiff(paste0("../outputs/", model_version, "/figure_2.tiff"), height = 5, width = 7, res = 800, units = 'in')
+print(gg)
+dev.off()
+
 
 gg <- ggplot(dt) + 
   geom_hline(yintercept = 0, linetype = 2, color = "black", linewidth = .25)+
@@ -900,6 +910,9 @@ pdf(paste0("../outputs/", model_version, "/figure_2_bw.pdf"), height = 5, width 
 print(gg)
 dev.off()
 
+tiff(paste0("../outputs/", model_version, "/figure_2_bw.tiff"), height = 5, width = 7, res = 800, units = 'in')
+print(gg)
+dev.off()
 
 
 
