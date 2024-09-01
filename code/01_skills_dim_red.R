@@ -1,4 +1,3 @@
-library(Rfast)
 library(ggplot2)
 library(dplyr)
 library(magrittr)
@@ -6,8 +5,11 @@ library(stringr)
 library(readxl)
 library(haven)
 library(data.table)
-library(umap)
 library(ggpubr)
+library(readr)
+library(psych)
+library(readstata13)
+
 theme_set(theme_bw(base_size = 8, base_family = "serif")) 
 
 
@@ -159,6 +161,8 @@ skills[, OCCSOC := gsub("-", "", substr(O.NET.SOC.Code,1,7))]
 skills[, Standard.Error := as.numeric(Standard.Error)]
 skills[, Element.Name := paste0(Element.Name, ".", Scale.ID)]
 
+saveRDS(skills, "../ref/skills_unedited.rds")
+
 
 # collapse to a smaller dataset
 skills <- skills[, .(Data.Value  = mean(Data.Value, na.rm = T), 
@@ -190,7 +194,7 @@ skills <- merge(skills, occ_xwalk[,.(OCCSOC, `CPS Code`, `CPS Occupational Title
 ######################################################################################
 
 ### source handwritten code to do the crosswalk
-source("crosswalk_code.R")
+source("99_crosswalk_code.R")
 
 # reduce to observations with more than 10 cases
 gen[,.N, by = occ1950] %>% 
@@ -228,7 +232,7 @@ skills_arch <- copy(skills)
 # run parallel analysis to choose number of factors
 
 out <- psych::fa.parallel(x= cor(skills[,.SD, .SDcols = names(skills)[names(skills) %like% ".LV"]]), fm="minres", fa="fa",
-                          n.obs = nrow(skills))
+                          n.obs = nrow(skills),sim = F, n.iter = 1 )
 
 # extract values for parallel analysis
 
@@ -250,18 +254,28 @@ data.table(component = 1:length(out$fa.values), fa_values = out$fa.values, fa_si
   theme(legend.position = "bottom", 
         legend.text = element_text(size = 8)) -> gg
 
+dir.create("../outputs")
+
 pdf("../outputs/appendix_figure_a2.pdf", width = 4.3, height = 3.3)
+print(gg)
+dev.off()
+
+tiff("../outputs/appendix_figure_a2.tiff", width = 4.3, height = 3.3, res = 800, units = 'in')
 print(gg)
 dev.off()
 
 
 
 
+
 ###
 # # Rerun FA using N factors (N = 10)
-fact_anal_orig <- psych::fa(skills[,.SD, .SDcols = names(skills)[names(skills) %like% ".LV"]], nfactors = 10, max.iter = 100000, scores = "regression", rotate = "varimax")
+fact_anal_orig <- psych::fa(skills[,.SD, .SDcols = names(skills)[names(skills) %like% ".LV"]], nfactors = 10, max.iter = 100000,
+                            scores = "regression", rotate = "varimax")
 
 # append scores to data
+
+# on some machines this leads to different outcomes. I haven't figured out why, but it is reproducible on my machine.
 fact_scores <- fact_anal_orig$scores %>% data.table()
 setnames(fact_scores, names(fact_scores), gsub("MR", "fact_", names(fact_scores)))
 
@@ -306,7 +320,7 @@ extract_cum_variance <- function (x, digits = 3L, cutoff = 0.1, sort = FALSE, ..
 
 loadings <- extract_cum_variance(fact_anal_orig$loadings)
 
-# I don't remember renaming these, but load back in their original names
+# load back in characteristics' original names
 alt_names <- fread("../ref/skills_xwalk.csv")
 setnames(skills, paste0(alt_names$Element.Name2[paste0(alt_names$Element.Name2, ".LV") %in% names(skills)], ".LV"), 
          paste0(alt_names$Element.Name[paste0(alt_names$Element.Name2, ".LV") %in% names(skills)], ".LV"), skip_absent = T)
@@ -453,6 +467,11 @@ pdf("../outputs/appendix_figure_a1.pdf", width = 4.3, height = 3.3)
 print(gg)
 dev.off()
 
+tiff("../outputs/appendix_figure_a1.tiff", width = 4.3, height = 3.3, res = 800, units = 'in')
+print(gg)
+dev.off()
+
+
 
 
 
@@ -500,6 +519,11 @@ gg <- skills_temp %>%
 pdf("../outputs/appendix_figure_a3.pdf", height= 6, width = 10)
 print(gg)
 dev.off()
+
+tiff("../outputs/appendix_figure_a3.tiff", width = 10, height = 6, res = 800, units = 'in')
+print(gg)
+dev.off()
+
 
 # save output
 saveRDS(skills, "../ref/skills_occ1950_new.rds")
