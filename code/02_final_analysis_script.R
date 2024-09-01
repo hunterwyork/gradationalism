@@ -1,3 +1,4 @@
+library(Rfast)
 library(ggplot2)
 library(dplyr)
 library(magrittr)
@@ -6,10 +7,7 @@ library(readxl)
 library(haven)
 library(data.table)
 library(gnm)
-library(ggthemes)
-library(kableExtra)
-library(ggh4x)
-library(lmtest)
+
 
 # ggplot settings
 theme_set(theme_bw(base_size = 8, base_family = "serif")) 
@@ -71,7 +69,6 @@ counts <- counts[!focc1950 %in% c(999,997,995,595) & focc1950 < 979]
 # save variable of occ chars
 vars <- names(skills)[(!names(skills) %like% "OCC|occ")]
 
-skills[, OCC1950 := as.numeric(OCC1950)]
 
 # merge mobility table with child characteristics
 counts <- merge(counts, skills[,.SD, .SDcols = c("OCC1950", vars, 
@@ -148,10 +145,6 @@ iger <- function(c.var, c.sex, c.parent_sex){
   return(out)
 }
 
-#add a new name for SEI just to keep consistant
-gen[, fact_20_SEI := SEI]
-gen[, fact_20_SEI_f := SEI_f]
-
 mapply_grid <- expand.grid(var = c(c(c.vars, "fact_20_SEI")), 
                            c.sex = 1:2, 
                            c.parent_sex = 1:2) %>% data.table()
@@ -198,23 +191,7 @@ all_out[, final := paste0(estim, "\\newline", con_ing)]
 all_out <- all_out[order(Variable)]
 all_out_wide <- dcast(all_out, Variable ~ `Parent/Child`, value.var = "final")
 
-dir.create(paste0("../outputs/", model_version))
-
-knitr::kable(all_out_wide,"latex",
-             row.names = F, escape = F,
-             align = c("l", rep("c", 4)),
-             col.names = c("", "Father-Son", "Father-Daughter", "Mother-Son", "Mother-Daughter"), 
-             booktabs = T,
-             linesep = "") %>%
-  add_header_above(c(" " =1, "Intergenerational Elasticity Among" = 4)) %>% 
-  save_kable(file =  paste0("../outputs/",model_version, "/table_4.tex"))
-
-
-# save counts as intermediate file for table 5 later
-saveRDS(counts,   paste0("../ref/counts", model_version, ".Data"))
-
-
-
+saveRDS(all_out_wide, "../ref/table_4_data.rds")
 
 
 ###
@@ -542,247 +519,13 @@ out <- rbind(out, out2, fill = T)
 dt <- out
 
 
-### relable everything to make it pretty for plotting
+### save file and run code for plotting in separate file
 
-dt <- dt[rn %like% "micro_c:as|macro_c|meso_c"]
-dt[, microocc := gsub("micro_c:as.factor(microocc)", "", rn, fixed = T)]
-dt[, microocc := gsub("macro_c:as.factor(macroocc)", "", microocc, fixed = T)]
-dt[, microocc := gsub("meso_c:as.factor(mesoocc)", "", microocc, fixed = T)]
-dt[rn %like% "micro", level := "Microclass"]
-dt[rn %like% "meso", level := "Mesoclass"]
-dt[rn %like% "macro", level := "Macroclass"]
-dt[, name := gsub("Micro: |Macro: |Meso: ", "", microocc)]
+saveRDS(dt, "../ref/figure_1_data.rds")
 
 
-### create CIs
-dt[, upper  := Estimate + 1.96 * `Std. Error`]
-dt[, lower  := Estimate - 1.96 * `Std. Error`]
-dt[, significant := ifelse(`Pr(>|z|)` < .05, "Significant", "Not Significant")]
 
 
-# create better model names for graph
-dt[model == "All (10) Components No Micro", model2 := "Model 5: Microclass Immobility Effects + SEI"]
-dt[model == "All (10) Components", model2 := "Model 6: Model 5 + 10 Factor Scaling Effects"]
-
-
-# order effect sizes based on fathers/sons
-microocc_levs <- dt[model == "All (10) Components No Micro" & sex == 1 & 
-                      parent_sex == 1 & rn %like% "micro"] %>% 
-  .[order(level, Estimate, sex, parent_sex), microocc]
-
-dt[, name := as.character(name)]
-dt[, name := factor(name, microocc_levs)]
-
-# create grouping variables
-dt[, `Both Insignificant` := ifelse(all(upper > 7 & lower < -7), "Not Significant",
-                                    "Significant"), 
-   by = .(sex, parent_sex, name)]
-
-
-# rename facet labels
-dt[parent_sex == 2, parent_sex_clean := "Mothers"]
-dt[parent_sex == 1, parent_sex_clean := "Fathers"]
-dt[sex == 1, sex_clean := "Sons"]
-dt[sex == 2, sex_clean := "Daughters"]
-
-dt[, parent_sex_clean := factor(parent_sex_clean, levels = c("Fathers", "Mothers"))]
-dt[, sex_clean := factor(sex_clean, levels = c("Sons", "Daughters"))]
-
-# assign signs
-signs <- dt[level %like% "Micro" &
-              model %like% "fact|PC|pca|base_model_mic_mac_mes|Eight|Six|All",.(N_signficant = length(Estimate[Estimate > 0 & significant == "Significant"])), 
-            by = .(parent_sex, sex, model)]
-
-signs <- signs[,.(new_label = paste0("Originally Significant: ", N_signficant[model == "All (10) Components No Micro"], "\n", 
-                                     "With Scaling Effects: ", N_signficant[model == "All (10) Components"])), 
-               by = .(parent_sex, sex)]
-
-dt <- merge(dt, signs, by = c("parent_sex", "sex"))
-
-dt[, parent_sex_sex_clean := paste0(parent_sex_clean, "/", sex_clean)]
-dt[, parent_sex_sex_clean := factor(parent_sex_sex_clean, 
-                                    levels = unique(as.character(parent_sex_sex_clean))[c(1,2,3,4)])]
-
-# plot
-gg <- ggplot(dt[level %like% "Micro" &
-                  model %like% "fact|PC|pca|base_model_mic_mac_mes|Eight|Six|All"]
-             %>% .[, model2 := factor(model2, levels = unique(model2)[c(2,1,3)])]) + 
-  geom_pointrange(aes(x = name, y = Estimate, ymax = upper, ymin = lower, color = model2, group = model,
-                      shape = as.factor(significant),
-                      linetype = as.factor(`Both Insignificant`)), position = position_dodge(width = .7), size = .17) +
-  geom_hline(yintercept = 0, linetype = 2) + 
-  scale_y_continuous(#trans = scales::pseudo_log_trans(base = 10, sigma = 10),
-    breaks = c(-4, -2, 0, 2, 4)) +
-  scale_shape_manual(values = c(4,1)) + 
-  coord_flip(ylim = c(-6,6)) + 
-  #facet_nested(attenuation ~., scales = "free_y", space = "free_y") + 
-  theme(strip.text.y.right = element_text(angle = 0), 
-        axis.text.y.left = element_text(size= 8), 
-        legend.text = element_text(size = 8)) + 
-  #scale_color_viridis_d(begin = .25, end = .75) + 
-  labs(x = "Micro-Class", color = "Model", shape = "Significance", 
-       y = "Immobility Effect Parameter Estimate") + 
-  theme_bw(base_size = 9, base_family = "serif") + 
-  theme(legend.position = "bottom", legend.justification = c(0, 1), plot.title.position = "plot")+
-  guides(color=guide_legend(nrow=2,byrow=TRUE), 
-         shape=guide_legend(nrow=2,byrow=TRUE)) + 
-  facet_grid(~ parent_sex_sex_clean + new_label) + 
-  scale_linetype_manual(values = c(3,1))+
-  theme(strip.background =element_rect(fill="white")) + 
-  guides(linetype = FALSE, 
-         alpha = F) + 
-  scale_color_viridis_d(begin = .25, end = .7)# + theme_bw()
-
-print(gg)
-
-
-dir.create(paste0("../outputs/", model_version), recursive = T)
-
-pdf(paste0("../outputs/", model_version, "/figure_1.pdf"), height = 6.95, width = 7.3)
-print(gg)
-dev.off()
-
-tiff(paste0("../outputs/", model_version, "/figure_1.tiff"), height = 6.95, width = 7.3, res = 800, units = 'in')
-print(gg)
-dev.off()
-
-gg <- ggplot(dt[level %like% "Micro" &
-                  model %like% "fact|PC|pca|base_model_mic_mac_mes|Eight|Six|All"]
-             %>% .[, model2 := factor(model2, levels = unique(model2)[c(2,1,3)])]) + 
-  geom_pointrange(aes(x = name, y = Estimate, ymax = upper, ymin = lower, color = model2, group = model,
-                      shape = as.factor(significant),
-                      linetype = as.factor(`Both Insignificant`)), position = position_dodge(width = .7), size = .17) +
-  geom_hline(yintercept = 0, linetype = 2) + 
-  scale_y_continuous(#trans = scales::pseudo_log_trans(base = 10, sigma = 10),
-    breaks = c(-4, -2, 0, 2, 4)) +
-  scale_shape_manual(values = c(4,1)) + 
-  coord_flip(ylim = c(-6,6)) + 
-  #facet_nested(attenuation ~., scales = "free_y", space = "free_y") + 
-  theme(strip.text.y.right = element_text(angle = 0), 
-        axis.text.y.left = element_text(size= 8), 
-        legend.text = element_text(size = 8)) + 
-  #scale_color_viridis_d(begin = .25, end = .75) + 
-  labs(x = "Micro-Class", color = "Model", shape = "Significance", 
-       y = "Immobility Effect Parameter Estimate") + 
-  theme_bw(base_size = 9, base_family = "serif") + 
-  theme(legend.position = "bottom", legend.justification = c(0, 1), plot.title.position = "plot")+
-  guides(color=guide_legend(nrow=2,byrow=TRUE), 
-         shape=guide_legend(nrow=2,byrow=TRUE)) + 
-  facet_grid(~ parent_sex_sex_clean + new_label) + 
-  scale_linetype_manual(values = c(3,1))+
-  theme(strip.background =element_rect(fill="white")) + 
-  guides(linetype = FALSE, 
-         alpha = F) + 
-  scale_color_manual(values = c("black", "gray60"))# + theme_bw()
-
-print(gg)
-
-
-dir.create(paste0("../outputs/", model_version), recursive = T)
-
-pdf(paste0("../outputs/", model_version, "/figure_1_bw.pdf"), height = 6.95, width = 7.3)
-print(gg)
-dev.off()
-
-tiff(paste0("../outputs/", model_version, "/figure_1_bw.tiff"), height = 6.95, width = 7.3, res = 800, units = 'in')
-print(gg)
-dev.off()
-
-
-#### Repeat for macro/meso attenuation
-
-dt <- out
-
-dt <- dt[rn %like% "micro_c:as|macro_c|meso_c"]
-dt[, microocc := gsub("micro_c:as.factor(microocc)", "", rn, fixed = T)]
-dt[, microocc := gsub("macro_c:as.factor(macroocc)", "", microocc, fixed = T)]
-dt[, microocc := gsub("meso_c:as.factor(mesoocc)", "", microocc, fixed = T)]
-dt[rn %like% "micro", level := "Microclass"]
-dt[rn %like% "meso", level := "Mesoclass"]
-dt[rn %like% "macro", level := "Macroclass"]
-dt[, name := gsub("Micro: |Macro: |Meso: ", "", microocc)]
-
-dt[, upper  := Estimate + 1.96 * `Std. Error`]
-dt[, lower  := Estimate - 1.96 * `Std. Error`]
-dt[, significant := ifelse(`Pr(>|z|)` < .05, "Significant", "Not Significant")]
-
-
-dt[model == "All (10) Components No Micro", model2 := "Model 5: Microclass Immobility Effects + SEI"]
-dt[model == "All (10) Components", model2 := "Model 6: Model 5 + 10 Factor Scaling Effects"]
-
-microocc_levs <- dt[model == "All (10) Components No Micro" & sex == 1 & 
-                      parent_sex == 1 & rn %like% "meso|macro"] %>% 
-  .[order(level, Estimate, sex, parent_sex), microocc]
-
-dt[, name := as.character(name)]
-dt[, name := factor(name, microocc_levs)]
-
-dt[, `Both Insignificant` := ifelse(all(upper > 7 & lower < -7), "Not Significant",
-                                    "Significant"), 
-   by = .(sex, parent_sex, name)]
-
-
-dt[parent_sex == 2, parent_sex_clean := "Mothers"]
-dt[parent_sex == 1, parent_sex_clean := "Fathers"]
-dt[sex == 1, sex_clean := "Sons"]
-dt[sex == 2, sex_clean := "Daughters"]
-
-dt[, parent_sex_clean := factor(parent_sex_clean, levels = c("Fathers", "Mothers"))]
-dt[, sex_clean := factor(sex_clean, levels = c("Sons", "Daughters"))]
-
-signs <- dt[level %like% "Meso|Macro" &
-              model %like% "fact|PC|pca|base_model_mic_mac_mes|Eight|Six|All",.(N_signficant = length(Estimate[Estimate > 0 & significant == "Significant"])), 
-            by = .(parent_sex, sex, model)]
-
-signs <- signs[,.(new_label = paste0("Originally Significant: ", N_signficant[model == "All (10) Components No Micro"], "\n", 
-                                     "With Scaling Effects: ", N_signficant[model == "All (10) Components"])), 
-               by = .(parent_sex, sex)]
-
-dt <- merge(dt, signs, by = c("parent_sex", "sex"))
-
-dt[, parent_sex_sex_clean := paste0(parent_sex_clean, "/", sex_clean)]
-dt[, parent_sex_sex_clean := factor(parent_sex_sex_clean, 
-                                    levels = unique(as.character(parent_sex_sex_clean))[c(1,2,3,4)])]
-
-
-gg <- ggplot(dt[level %like% "Meso|Macro" &
-                  model %like% "fact|PC|pca|base_model_mic_mac_mes|Eight|Six|All"]
-             %>% .[, model2 := factor(model2, levels = unique(model2)[c(2,1,3)])]) + 
-  geom_pointrange(aes(x = name, y = Estimate, ymax = upper, ymin = lower, color = model2, group = model,
-                      shape = as.factor(significant),
-                      linetype = as.factor(`Both Insignificant`)), position = position_dodge(width = .7), size = .17) +
-  geom_hline(yintercept = 0, linetype = 2) + 
-  scale_y_continuous(trans = scales::pseudo_log_trans(base = 10, sigma = .05),
-    breaks = c(-4, -1, -.25, 0,.25, 1, 4), 
-    labels = c("-4", "-1", "-.25", "0", ".25", "1", "4")) +
-  scale_shape_manual(values = c(4,1)) + 
-  coord_flip(ylim = c(-6,6)) + 
-  #facet_nested(attenuation ~., scales = "free_y", space = "free_y") + 
-  theme(strip.text.y.right = element_text(angle = 0), 
-        axis.text.y.left = element_text(size= 10), 
-        legend.text = element_text(size = 10)) + 
-  #scale_color_viridis_d(begin = .25, end = .75) + 
-  labs(x = "Macro-/Meso-Class", color = "Model", shape = "Significance", 
-       y = "Immobility Effect Parameter Estimate") + 
- theme_bw(base_size = 10, base_family = "serif") + 
-  theme(legend.position = "bottom", legend.justification = c(0, 1), plot.title.position = "plot")+
-  guides(color=guide_legend(nrow=2,byrow=TRUE), 
-         shape=guide_legend(nrow=2,byrow=TRUE)) + 
-  facet_grid(level~ parent_sex_sex_clean + new_label, scales = "free", space = "free") + 
-  scale_linetype_manual(values = c(3,1))+
-  theme(strip.background =element_rect(fill="white")) + 
-  guides(linetype = FALSE, 
-         alpha = F) + 
-  scale_color_viridis_d(begin = .25, end = .7)# + theme_bw()
-
-print(gg)
-
-
-dir.create(paste0("../outputs/", model_version), recursive = T)
-
-pdf(paste0("../outputs/", model_version, "/appendix_figure_a6.pdf"), height = 6.25, width = 7)
-print(gg)
-dev.off()
 
 
 
@@ -802,117 +545,8 @@ for(c.sex in 1:2){
 }
 dt <-rbindlist(out3)
 
-dt <- dt[!rn %like% "micro_c:as|macro_c:as|mecro_c:as|as.factor|Intercept"]
-dt[, variable := tstrsplit(rn, ":", keep = 2)]
-dt[, variable := gsub("_f" , "", variable)]
+saveRDS(dt, "../ref/figure_2_data.RDS")
 
-dt[, variable := gsub("_" , " ", variable)]
-
-dt[, variable := sub('^(\\w?)', '\\U\\1', variable, perl=T)]
-dt[rn %like% "micro_c_neg", type := "Mobility Effects"]
-dt[rn %like% "^micro_c|micro_c$", type := "Immobility Effects"]
-
-dt[, upper  := Estimate + 1.96 * `Std. Error`]
-dt[, lower  := Estimate - 1.96 * `Std. Error`]
-dt[, significant := ifelse(`Pr(>|z|)` < .05, "Significant", "Not Significant")]
-dt[, parent_sex := ifelse(parent_sex == 1, "Fathers", "Mothers")]
-dt[, child_sex := ifelse(sex == 1, "Sons", "Daughters")]
-
-
-
-dt[variable %like% "Education req", variable := "Required Educ./Training"]
-var_order <- dt[type %like% "Mobility" & parent_sex %like% "Father" & child_sex %like% "Son"] %>% .[order(Estimate), variable]
-dt[, `Parent/Child` := paste0(parent_sex, "/", child_sex)]
-
-# dt[, variable := factor(variable, levels = var_order)]
-# 
-dt[, variable := gsub("fact |Fact ", "", variable)]
-dt[, variable := gsub("`", "", variable)]
-dt[, variable := gsub("ac$", "", variable)]
-dt[, variable := gsub("Repetion", "Repetition", variable)]
-
-
-
-dt[,variable :=   factor(variable, levels = unique(dt$variable)[order((as.numeric(substr(tstrsplit(unique(dt$variable), " ", keep = 2, type.convert = T)[[1]], 1,2))))][c(1:10)])]
-
-dt[, `Parent/Child` := factor(`Parent/Child`, levels = unique(`Parent/Child`)[c(1,3,2,4)])]
-library(ggthemes)
-gg <- ggplot(dt) + 
-  geom_hline(yintercept = 0, linetype = 2, color = "black", linewidth = .25)+
-  geom_bar(aes(x = variable, y = Estimate,
-               shape = as.factor(significant), 
-               group =  `Parent/Child`, fill =  `Parent/Child`), stat = "identity", 
-           width = .5,
-           position = position_dodge(width = .5)) +
-  scale_y_continuous(trans = scales::pseudo_log_trans(sigma = .2, base = 2), 
-                     breaks = c(-10, -4, -1.5,-.5, 0, .5,1.5, 4, 10))+
-  scale_fill_colorblind()+
-  geom_crossbar(aes(x = variable, y = Estimate, ymax = upper, ymin = lower,
-                    group =  `Parent/Child`,
-                    shape = as.factor(significant)), width = 0, color = "gray50" ,
-                fatten = .1,
-                position = position_dodge(width = .5)) +
-  theme(strip.background =element_rect(fill="white")) + 
-  facet_grid(type ~.) +
-  theme_bw(base_size = 10, base_family = "serif") +
-  
-  #scale_y_continuous(trans = scales::pseudo_log_trans()) +
-  scale_shape_manual(values = c(4,1)) +
-  labs(x = "Variable", y = "Estimate",# title = "Scaling Effects for Occupational Mobility and\nImmobility Seperately, by Sex", 
-       shape = "Significance") + 
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1, vjust =1), 
-        panel.grid.minor = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) + 
-  coord_cartesian(ylim = c(-10, 10)) #+ theme_bw()
-
-#gg
-
-pdf(paste0("../outputs/", model_version, "/figure_2.pdf"), height = 5, width = 7)
-print(gg)
-dev.off()
-
-tiff(paste0("../outputs/", model_version, "/figure_2.tiff"), height = 5, width = 7, res = 800, units = 'in')
-print(gg)
-dev.off()
-
-
-gg <- ggplot(dt) + 
-  geom_hline(yintercept = 0, linetype = 2, color = "black", linewidth = .25)+
-  geom_bar(aes(x = variable, y = Estimate,
-               shape = as.factor(significant), 
-               group =  `Parent/Child`, fill =  `Parent/Child`), stat = "identity", 
-           width = .5,
-           position = position_dodge(width = .5)) +
-  scale_y_continuous(trans = scales::pseudo_log_trans(sigma = .2, base = 2), 
-                     breaks = c(-10, -4, -1.5,-.5, 0, .5,1.5, 4, 10))+
-  scale_fill_manual(values = c("gray20", "gray40", "gray60", "gray80"))+
-  geom_crossbar(aes(x = variable, y = Estimate, ymax = upper, ymin = lower,
-                    group =  `Parent/Child`,
-                    shape = as.factor(significant)), width = 0, color = "gray50" ,
-                fatten = .1,
-                position = position_dodge(width = .5)) +
-  theme(strip.background =element_rect(fill="white")) + 
-  facet_grid(type ~.) +
-  theme_bw(base_size = 10, base_family = "serif") +
-  
-  #scale_y_continuous(trans = scales::pseudo_log_trans()) +
-  scale_shape_manual(values = c(4,1)) +
-  labs(x = "Variable", y = "Estimate",# title = "Scaling Effects for Occupational Mobility and\nImmobility Seperately, by Sex", 
-       shape = "Significance") + 
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1, vjust =1), 
-        panel.grid.minor = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) + 
-  coord_cartesian(ylim = c(-10, 10)) #+ theme_bw()
-
-#gg
-
-pdf(paste0("../outputs/", model_version, "/figure_2_bw.pdf"), height = 5, width = 7)
-print(gg)
-dev.off()
-
-tiff(paste0("../outputs/", model_version, "/figure_2_bw.tiff"), height = 5, width = 7, res = 800, units = 'in')
-print(gg)
-dev.off()
 
 
 
@@ -932,72 +566,7 @@ for(c.sex in 1:2){
 }
 dt <-rbindlist(out3)
 
-dt <- dt[!rn %like% "micro_c:as|macro_c:as|meso_c:as|as.factor|Intercept"]
-dt[, variable := tstrsplit(rn, ":", keep = 2)]
-dt[, variable := gsub("_f" , "", variable)]
-
-dt[, variable := gsub("_" , " ", variable)]
-
-dt[, variable := sub('^(\\w?)', '\\U\\1', variable, perl=T)]
-dt[rn %like% "micro_c_neg", type := "Mobility Effects"]
-dt[rn %like% "^micro_c:|micro_c$", type := "Immobility Effects"]
-
-dt[, upper  := Estimate + 1.96 * `Std. Error`]
-dt[, lower  := Estimate - 1.96 * `Std. Error`]
-dt[, significant := ifelse(`Pr(>|z|)` < .05, "Significant", "Not Significant")]
-dt[, parent_sex := ifelse(parent_sex == 1, "Fathers", "Mothers")]
-dt[, child_sex := ifelse(sex == 1, "Sons", "Daughters")]
-
-
-
-dt[variable %like% "Education req", variable := "Required Educ./Training"]
-var_order <- dt[type %like% "Mobility" & parent_sex %like% "Father" & child_sex %like% "Son"] %>% .[order(Estimate), variable]
-dt[, `Parent/Child` := paste0(parent_sex, "/", child_sex)]
-
-# dt[, variable := factor(variable, levels = var_order)]
-# 
-dt[, variable := gsub("fact |Fact ", "", variable)]
-dt[, variable := gsub("`", "", variable)]
-dt[, variable := gsub("ac$", "", variable)]
-dt[, variable := gsub("Repetion", "Repetition", variable)]
-
-
-
-dt[,variable :=   factor(variable, levels = unique(dt$variable)[order((as.numeric(substr(tstrsplit(unique(dt$variable), " ", keep = 2, type.convert = T)[[1]], 1,2))))][c(1:12)])]
-
-dt[, `Parent/Child` := factor(`Parent/Child`, levels = unique(`Parent/Child`)[c(1,3,2,4)])]
-library(ggthemes)
-gg <- ggplot(dt) + 
-  geom_hline(yintercept = 0, linetype = 2, color = "black", linewidth = .25)+
-  geom_bar(aes(x = variable, y = Estimate,
-               shape = as.factor(significant), 
-               group =  `Parent/Child`, fill =  `Parent/Child`), stat = "identity", 
-           width = .5,
-           position = position_dodge(width = .5)) +
-  scale_y_continuous(trans = scales::pseudo_log_trans(sigma = .2, base = 2), 
-                     breaks = c(-10, -4, -1.5,-.5, 0, .5,1.5, 4, 10))+
-  scale_fill_colorblind()+
-  geom_crossbar(aes(x = variable, y = Estimate, ymax = upper, ymin = lower,
-                    group =  `Parent/Child`,
-                    shape = as.factor(significant)), width = 0, color = "gray50" ,
-                fatten = .1,
-                position = position_dodge(width = .5)) +
-  facet_grid(type ~.) +
-  theme_bw(base_size = 10, base_family = "serif") +
-  
-  #scale_y_continuous(trans = scales::pseudo_log_trans()) +
-  scale_shape_manual(values = c(4,1)) +
-  labs(x = "Variable", y = "Estimate",# title = "Scaling Effects for Occupational Mobility and\nImmobility Seperately, by Sex", 
-       shape = "Significance") + 
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1, vjust =1), 
-        panel.grid.minor = element_blank()) + 
-  coord_cartesian(ylim = c(-4, 5)) #+ theme_bw()
-
-#gg
-
-pdf(paste0("../outputs/", model_version, "/appendix_figure_a5.pdf"), height = 5, width = 7)
-print(gg)
-dev.off()
+saveRDS(dt, "../ref/appendix_figure_a5_data.rds")
 
 
 ###########
@@ -1032,51 +601,52 @@ for(c.sex in 1:2){
     rm(list = ls()[ls() %like% "base_model"])
     load(paste0("../ref/workspace", c.sex, "_", c.parent_sex,"_" ,model_version, ".Data"))
     
+    
+    ### base model characteristics
     lapply(list(base_model, 
-                base_model_mic_mac_mes, 
-                base_model_compare_2,
                 base_model_status,
                 base_model_mic_mac_mes_status,
                 base_model_mic_mac_mes_vars_10,
-                #  base_model_mic_mac_mes_vars_RC_10,
                 base_model_vars_10_no_status,
-                base_model_vars_10), model_descr ) %>% rbindlist -> out1
-    lapply(list(                                                    base_model_mic_mac_mes,
-                                                                    base_model_compare_2,
-                                                                    base_model_status,
-                                                                    base_model_mic_mac_mes_status,
-                                                                    base_model_mic_mac_mes_vars_10,
-                                                                    #                base_model_mic_mac_mes_vars_RC_10,
-                                                                    base_model_vars_10_no_status,
-                                                                    base_model_vars_10),lmr,  c.mod_comp = "base_model", inc_dem = F) %>%
+                base_model_vars_10, 
+                base_model_mic_mac_mes), model_descr ) %>% rbindlist -> out1
+    lapply(list(                  base_model_status,
+                                  base_model_mic_mac_mes_status,
+                                  base_model_mic_mac_mes_vars_10,
+                                  base_model_vars_10_no_status,
+                                  base_model_vars_10,
+                                  base_model_mic_mac_mes),lmr,  c.mod_comp = "base_model", inc_dem = F) %>%
       rbindlist()-> out2
     out2 <- rbind(data.table(matrix(c(NA, NA, NA, NA), nrow = 1)), out2 , use.names = F)
+    
+    # compare nested models to model with just sei
     lapply(list(base_model_mic_mac_mes_status, 
-                base_model_mic_mac_mes_vars_10,
-                #base_model_mic_mac_mes_vars_RC_10,
+                base_model_mic_mac_mes_vars_10, 
                 base_model_vars_10),lmr,
            c.mod_comp = "base_model_status", inc_dem = F) %>%
       rbindlist()-> out3
-    out3 <- rbind(data.table(matrix(c(NA), nrow =4, ncol = 4)),
+    # append to table
+    out3 <- rbind(data.table(matrix(c(NA), nrow =2, ncol = 4)),
                   out3[1:2,] ,
                   data.table(matrix(c(NA), nrow = 1, ncol = 4)), 
-                  out3[4,], 
-                  data.table(matrix(c(NA), nrow = 0, ncol = 4)),
+                  out3[3,], 
+                  data.table(matrix(c(NA), nrow = 1, ncol = 4)),
                   use.names = F)
-    lapply(list(base_model_mic_mac_mes_vars_10#,
-                #base_model_mic_mac_mes_vars_RC_10
-    ),lmr,
-    c.mod_comp = "base_model_mic_mac_mes_status", inc_dem = F) %>%
+    # compare nested model to mes/mic/mac immobility model
+    lapply(list(base_model_mic_mac_mes_vars_10),lmr,
+           c.mod_comp = "base_model_mic_mac_mes_status", inc_dem = F) %>%
       rbindlist()-> out4
-    out4 <- rbind(data.table(matrix(c(NA), nrow = 5, ncol = 4)),
+    # append to table
+    out4 <- rbind(data.table(matrix(c(NA), nrow = 3, ncol = 4)),
                   out4 ,
-                  data.table(matrix(c(NA), nrow = 2, ncol = 4)),use.names = F)
+                  data.table(matrix(c(NA), nrow = 3, ncol = 4)),use.names = F)
+    # compare nested model to pure gradational model
     lapply(list(base_model_vars_10),lmr,
            c.mod_comp = "base_model_vars_10_no_status", inc_dem = F) %>%
       rbindlist()-> out5
-    out5 <- rbind(data.table(matrix(c(NA), nrow = 7, ncol = 4)),
+    out5 <- rbind(data.table(matrix(c(NA), nrow = 5, ncol = 4)),
                   out5,
-                  data.table(matrix(c(NA), nrow = 0, ncol = 4)),
+                  data.table(matrix(c(NA), nrow = 1, ncol = 4)),
                   use.names = F)
     out_all <- cbind(out1, out2, out3, out4, out5)
     out_all[, sex := c.sex]
@@ -1087,10 +657,9 @@ for(c.sex in 1:2){
   }
 }
 
-table3 <- copy(out_all_all)
+table2 <- copy(out_all_all)
 
-saveRDS(table3, paste0("../outputs/", model_version, "/table3.rds"))
-
+saveRDS(table2, paste0("../outputs/", model_version, "/table3.rds"))
 
 
 ####################
@@ -1149,8 +718,13 @@ for(c.sex in 1){
       counts <- merge(counts, father_skills[,.SD, .SDcols = c("OCC1950_f", paste0(vars, "_f"), 
                                                               "microocc_f", "mesoocc_f", "macroocc_f")], by.x = "focc1950", by.y = "OCC1950_f")
       
+      counts[, PC_control := sample(PC1, nrow(counts))]
+      counts[, PC_control_f := sample(PC1, nrow(counts))]
+      
+      # Create difference variables between children and parents
       
       vars_to_loop <- vars
+      vars_to_loop <- c(vars_to_loop, "PC_control")
       for(c_var in vars_to_loop){
         counts[, paste0(c_var, "_diff") := (get(c_var) - get(paste0(c_var, "_f")))]
       }
@@ -1198,76 +772,7 @@ for(c.sex in 1){
 }
 dt <-rbindlist(out3)
 
-dt <- dt[!rn %like% "micro_c:as|macro_c:as|mecro_c:as|as.factor|Intercept"]
-dt[, variable := tstrsplit(rn, ":", keep = 2)]
-dt[, variable := gsub("_f" , "", variable)]
-
-dt[, variable := gsub("_" , " ", variable)]
-
-dt[, variable := sub('^(\\w?)', '\\U\\1', variable, perl=T)]
-dt[rn %like% "^micro_c|micro_c$", type := "Immobility Effects"]
-dt[rn %like% "micro_c_neg", type := "Mobility Effects"]
-
-dt[, upper  := Estimate + 1.96 * `Std. Error`]
-dt[, lower  := Estimate - 1.96 * `Std. Error`]
-dt[, significant := ifelse(`Pr(>|z|)` < .05, "Significant", "Not Significant")]
-dt[, parent_sex := ifelse(parent_sex == 1, "Fathers", "Mothers")]
-dt[, child_sex := ifelse(sex == 1, "Sons", "Daughters")]
-
-
-
-dt[variable %like% "Education req", variable := "Required Educ./Training"]
-var_order <- dt[type %like% "Mobility" & parent_sex %like% "Father" & child_sex %like% "Son"] %>% .[order(Estimate), variable]
-dt[, `Parent/Child` := paste0(parent_sex, "/", child_sex)]
-
-# dt[, variable := factor(variable, levels = var_order)]
-# 
-dt[, variable := gsub("fact |Fact ", "", variable)]
-dt[, variable := gsub("`", "", variable)]
-dt[, variable := gsub("ac$", "", variable)]
-dt[, variable := gsub("Repetion", "Repetition", variable)]
-
-dt[tercile == 1, Tercile := "1898-1936"]
-dt[tercile == 2, Tercile := "1937-1954"]
-dt[tercile == 3, Tercile := "1955-1993"]
-
-
-dt[,variable :=   factor(variable, levels = unique(dt$variable)[order((as.numeric(substr(tstrsplit(unique(dt$variable), " ", keep = 2, type.convert = T)[[1]], 1,2))))][c(1:10)])]
-
-dt[, `Parent/Child` := factor(`Parent/Child`, levels = unique(`Parent/Child`)[c(1,3,2,4)])]
-library(ggthemes)
-gg <- ggplot(dt) + 
-  geom_hline(yintercept = 0, linetype = 2, color = "black", linewidth = .25)+
-  geom_bar(aes(x = variable, y = Estimate,
-               shape = as.factor(significant), 
-               group =  `Tercile`, fill =  `Tercile`), stat = "identity", 
-           width = .5,
-           position = position_dodge(width = .5)) +
-  scale_y_continuous(trans = scales::pseudo_log_trans(sigma = .2, base = 2), 
-                     breaks = c(-10, -4, -1.5,-.5, 0, .5,1.5, 4, 10))+
-  # scale_fill_colorblind()+
-  geom_crossbar(aes(x = variable, y = Estimate, ymax = upper, ymin = lower,
-                    group =  Tercile,
-                    shape = as.factor(significant)), width = 0, color = "gray50" ,
-                fatten = .1,
-                position = position_dodge(width = .5)) +
-  facet_grid(type ~.) +
-  theme_bw(base_size = 10, base_family = "serif") +
-  
-  #scale_y_continuous(trans = scales::pseudo_log_trans()) +
-  scale_shape_manual(values = c(4,1)) +
-  scale_fill_manual(values = colorblind_pal()(8)[5:8])+
-  labs(x = "Variable", y = "Estimate",# title = "Scaling Effects for Occupational Mobility and\nImmobility Seperately, by Sex", 
-       shape = "Significance") + 
-  theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1, vjust =1), 
-        panel.grid.minor = element_blank()) + 
-  coord_cartesian(ylim = c(-4, 7))# + theme_bw()
-
-#gg
-
-pdf(paste0("../outputs/", model_version, "/appendix_figure_a4.pdf"), height = 5, width = 7)
-print(gg)
-dev.off()
+saveRDS(dt, "../ref/appendix_figure_a4_data.rds")
 
 
 

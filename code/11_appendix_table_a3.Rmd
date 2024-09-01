@@ -1,0 +1,53 @@
+---
+title: "table appendix 3"
+author: "Hunter York"
+date: "2023-03-09"
+output: 
+  pdf_document:
+    keep_tex: true
+geometry: paperheight=12.5in,paperwidth=6.2in,margin=0.2in
+header-includes:
+    - \usepackage{caption}
+    - \usepackage{booktabs}
+    - \AtBeginDocument{\let\maketitle\relax}
+    - \captionsetup[table]{labelformat=empty}
+    - \pagenumbering{gobble}
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+library(data.table)
+library(kableExtra)
+library(knitr)
+library(dplyr)
+library(stringr)
+```
+
+```{r, results = 'asis'}
+table2 <- readRDS("../ref/skills_unedited.rds")
+table2[,.(Element.Name)] %>% unique() -> table2
+table2[Element.Name %like% "skl", Domain := "Skills"]
+table2[Element.Name %like% "knl", Domain := "Knowledge"]
+table2[Element.Name %like% "abl", Domain := "Abilities"]
+table2[Element.Name %like% "sty", Domain := "Work Styles"]
+table2[Element.Name %like% "act", Domain := "Work Activities"]
+table2[Element.Name %like% "ctx", Domain := "Work Contexts"]
+table2[Element.Name %like% "vlu", Domain := "Values"]
+table2[Element.Name %like% "edu", Domain := "Education, Training, Credentials"]
+table2[, Element.Name := str_sub(Element.Name,5, -1)]
+table2 <- table2[order(Domain)]
+table2[Domain == lag(Domain), Domain := "."]
+
+
+table2[,c(2,1)] %>%  # mutate_all(linebreak, double_escape = F, linebreaker = "\\n") %>% 
+  kable("latex", row.names = F, escape = T,align = c("r", rep("r", 1)), #booktabs = T,
+     #   caption = "Table 1: Occupational Structure",
+        booktabs = TRUE,
+        longtable = TRUE, col.names = c("Domain", "Element Name")) %>%
+  kable_styling(., latex_options = c("hold_position", "repeat_header")) %>% 
+   column_spec(c(2), width = "7cm") %>% 
+   column_spec(c(1), width = "6cm") 
+
+```

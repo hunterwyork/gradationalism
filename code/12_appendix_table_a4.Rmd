@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+author: "Hunter York"
+date: "2023-03-09"
+output: 
+  pdf_document:
+    keep_tex: true
+  
+geometry: paperheight=12.5in,paperwidth=9in,margin=0.2in
+header-includes:
+    - \usepackage{caption}
+    - \usepackage{booktabs}
+    - \AtBeginDocument{\let\maketitle\relax}
+    - \captionsetup[table]{labelformat=empty}
+    - \pagenumbering{gobble}
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+library(data.table)
+library(kableExtra)
+library(knitr)
+library(dplyr)
+```
+
+```{r, results = 'asis'}
+table3 <- readRDS("../ref/skills_occ1950_new.rds")
+table3 <- table3[order(macroocc, mesoocc, microocc, OCC1950)]
+table3 <- table3[,.(macroocc, mesoocc, microocc, OCC1950, OCC1950_name)] %>% unique()
+table3[lag(macroocc) == macroocc, macroocc := "."]
+table3[lag(mesoocc) == mesoocc, mesoocc := "."]
+table3[lag(microocc) == microocc, microocc := "."]
+
+table3 %>%  # mutate_all(linebreak, double_escape = F, linebreaker = "\\n") %>% 
+  kable("latex", row.names = F, escape = T,align = c("r", rep("r", 4)), #booktabs = T,
+     #   caption = "Table 1: Occupational Structure",
+        booktabs = TRUE,
+        longtable = TRUE, col.names = c("Macro-Class", "Meso-Class", "Micro-Class", "Occ. Code", "1950 Census Occupation Title")) %>%
+  kable_styling(., latex_options = c("hold_position", "repeat_header")) %>% 
+   column_spec(c(1,2), width = "4cm") %>% 
+  column_spec(c(3, 5), width = "5cm") %>% 
+   column_spec(c(4), width = "1.5cm")
+
+
+```
