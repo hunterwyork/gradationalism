@@ -78,7 +78,7 @@ pdf(paste0("../outputs/", model_version, "/figure_2.pdf"), height = 5, width = 7
 print(gg)
 dev.off()
 
-tiff(paste0("../outputs/", model_version, "/figure_2.tiff"), height = 5, width = 7,res = 800, units = 'in')
+tiff(paste0("../outputs/", model_version, "/figure_2.tiff"), height = 5, width = 7,res = 300, units = 'in')
 print(gg)
 dev.off()
 
@@ -118,6 +118,6 @@ print(gg)
 dev.off()
 
 
-tiff(paste0("../outputs/", model_version, "/figure_2_bw.tiff"), height = 5, width = 7,res = 800, units = 'in')
+tiff(paste0("../outputs/", model_version, "/figure_2_bw.tiff"), height = 5, width = 7,res = 300, units = 'in')
 print(gg)
 dev.off()
