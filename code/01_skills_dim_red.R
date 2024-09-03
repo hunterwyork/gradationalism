@@ -39,15 +39,6 @@ names(occ_xwalk) <- occ_xwalk[4,] %>% unlist()
 occ_xwalk <- occ_xwalk[-(1:4),]
 occ_xwalk[, OCCSOC := gsub("-", "", `Hybrid SOC Code`)]
 
-occ_xwalk2 <- data.table(read_excel("../ref/2018-occupation-code-list-and-crosswalk.xlsx", sheet = 2))
-names(occ_xwalk2) <- occ_xwalk2[4,] %>% unlist()
-occ_xwalk2 <- occ_xwalk2[-(1:4),]
-occ_xwalk2 <- occ_xwalk2[,.(`2018 Census Title`, `2018 Census Code`, `2018 SOC Code`)]
-occ_xwalk2[, OCCSOC := gsub("-", "", `2018 SOC Code`)]
-setnames(occ_xwalk2, c("2018 Census Title", "2018 Census Code"), c("CPS Occupational Title", "CPS Code"))
-occ_xwalk2 <- occ_xwalk2[!is.na(`CPS Code`) & !`CPS Code` %flike% "-"]
-
-
 
 
 ######################################################################################

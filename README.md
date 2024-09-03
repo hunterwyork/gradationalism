@@ -5,7 +5,7 @@
 ### Code
 - **01-16.R or .Rmd**  
   Code for execution of analysis and making figures and tables
-  NB: Any appendix tables not explicitly referenced by a filename are made in 01 or 02 files.
+  NB: Any appendix tables not explicitly referenced by a filename are made in 01 or 02 files. All main text figures/tables have their own code file. Some supplementary figures/tables are wrapped into analysis code files for simplicity.
 - **99.R**  
   Helper functions called by files 01, 02. 
 
@@ -18,9 +18,8 @@
   Extract from IPUMS matching 1950 census occ codes with SEI and Prestige scales
 - **db_27_0_excel**  
   2022 version of O*NET database, downloadable from online
-- **2018-occupation-code-list-and-crosswalk.xlsx**
 - **skills_xwalk.csv**  
-  A helper file to rename gradational variables back to full names. Some programs abbreviate them
+  A helper file to rename gradational variables back to full names. Some programs abbreviate them.
 - **nem-occcode-cps-crosswalk.xlsx**  
   [BLS CPS SOC crosswalk](https://www.bls.gov/emp/documentation/crosswalks.htm)
 - **occ1950-recode.csv**  
