@@ -3,7 +3,7 @@ library(data.table)
 library(dplyr)
 
 # load in data and relable
-
+model_version <- "20240820_submission_final"
 dt <- readRDS( "../ref/figure_1_data.rds")
 
 dt <- dt[rn %like% "micro_c:as|macro_c|meso_c"]
@@ -105,6 +105,9 @@ pdf(paste0("../outputs/", model_version, "/figure_1.pdf"), height = 6.95, width 
 print(gg)
 dev.off()
 
+tiff(paste0("../outputs/", model_version, "/figure_1.tiff"), height = 6.95, width = 7.3,res = 800, units = 'in')
+print(gg)
+dev.off()
 
 
 gg <- ggplot(dt[level %like% "Micro" &
@@ -142,5 +145,10 @@ print(gg)
 dir.create(paste0("../outputs/", model_version), recursive = T)
 
 pdf(paste0("../outputs/", model_version, "/figure_1_bw.pdf"), height = 6.95, width = 7.3)
+print(gg)
+dev.off()
+
+
+tiff(paste0("../outputs/", model_version, "/figure_1_bw.tiff"), height = 6.95, width = 7.3,res = 800, units = 'in')
 print(gg)
 dev.off()

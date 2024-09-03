@@ -4,6 +4,9 @@ library(dplyr)
 
 # load in data and relable
 
+model_version <- "20240820_submission_final"
+
+
 dt <- readRDS( "../ref/figure_2_data.rds")
 
 dt <- dt[!rn %like% "micro_c:as|macro_c:as|mecro_c:as|as.factor|Intercept"]
@@ -75,6 +78,10 @@ pdf(paste0("../outputs/", model_version, "/figure_2.pdf"), height = 5, width = 7
 print(gg)
 dev.off()
 
+tiff(paste0("../outputs/", model_version, "/figure_2.tiff"), height = 5, width = 7,res = 800, units = 'in')
+print(gg)
+dev.off()
+
 
 gg <- ggplot(dt) + 
   geom_hline(yintercept = 0, linetype = 2, color = "black", linewidth = .25)+
@@ -107,5 +114,10 @@ gg <- ggplot(dt) +
 #gg
 
 pdf(paste0("../outputs/", model_version, "/figure_2_bw.pdf"), height = 5, width = 7)
+print(gg)
+dev.off()
+
+
+tiff(paste0("../outputs/", model_version, "/figure_2_bw.tiff"), height = 5, width = 7,res = 800, units = 'in')
 print(gg)
 dev.off()
