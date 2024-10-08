@@ -12,3 +12,8 @@ jobs:
           DATAVERSE_TOKEN: ${{secrets.DATAVERSE_TOKEN}}
           DATAVERSE_SERVER: https://dataverse.harvard.edu
           DATAVERSE_DATASET_DOI: doi:10.7910/DVN/6WLRJB
+          GITHUB_DIR: 
+            code
+            ref
+            inputs
+            outputs
